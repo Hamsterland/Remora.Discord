@@ -20,6 +20,7 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
+using System.Net.Http;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -72,6 +73,60 @@ public class DiscordRestOAuth2API : AbstractDiscordRestAPI, IDiscordRestOAuth2AP
         (
             "oauth2/@me",
             b => b.WithRateLimitContext(this.RateLimitCache),
+            ct: ct
+        );
+    }
+
+    /// <inheritdoc/>
+    public async Task<Result<IAccessTokenInformation>> ExchangeTokenAsync
+    (
+        string clientID,
+        string clientSecret,
+        string code,
+        string redirectUri,
+        string grantType = "authorization_code",
+        CancellationToken ct = default
+    )
+    {
+        return await this.RestHttpClient.PostAsync<IAccessTokenInformation>
+        (
+            "oauth2/token",
+            b =>
+            {
+                b
+                .AddContent(new StringContent(clientID), "client_id")
+                .AddContent(new StringContent(clientSecret), "client_secret")
+                .AddContent(new StringContent(grantType), "grant_type")
+                .AddContent(new StringContent(code), "code")
+                .AddContent(new StringContent(redirectUri), "redirect_uri")
+                .AddHeader("Content-Type", "application/x-www-form-urlencoded");
+            },
+            ct: ct
+        );
+    }
+
+    /// <inheritdoc/>
+    public async Task<Result<IAccessTokenInformation>> RefreshTokenAsync
+    (
+        string clientID,
+        string clientSecret,
+        string refreshToken,
+        string grantType = "refresh_token",
+        CancellationToken ct = default
+    )
+    {
+        return await this.RestHttpClient.PostAsync<IAccessTokenInformation>
+        (
+            "oauth2/token",
+            b =>
+            {
+                b
+                    .AddContent(new StringContent(clientID), "client_id")
+                    .AddContent(new StringContent(clientSecret), "client_secret")
+                    .AddContent(new StringContent(grantType), "grant_type")
+                    .AddContent(new StringContent(refreshToken), "refresh_token")
+                    .AddHeader("Content-Type", "application/x-www-form-urlencoded");
+            },
             ct: ct
         );
     }
