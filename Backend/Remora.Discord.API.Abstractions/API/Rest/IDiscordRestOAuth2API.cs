@@ -53,4 +53,42 @@ public interface IDiscordRestOAuth2API
     (
         CancellationToken ct = default
     );
+
+    /// <summary>
+    /// Gets the OAUth2 access and refresh tokens by exchanging a code from a code grant.
+    /// </summary>
+    /// <param name="clientID">The application client ID.</param>
+    /// <param name="clientSecret">The application client secret.</param>
+    /// <param name="code">The code received from the code grant.</param>
+    /// <param name="redirectUri">The application redirect URI.</param>
+    /// <param name="grantType">The code grant type.</param>
+    /// <param name="ct">The cancellation token for this operation.</param>
+    /// <returns>A creation result which may or may not have succeeded.</returns>
+    Task<Result<IAccessTokenInformation>> ExchangeTokenAsync
+    (
+        string clientID,
+        string clientSecret,
+        string code,
+        string redirectUri,
+        string grantType = "authorization_code",
+        CancellationToken ct = default
+    );
+
+    /// <summary>
+    /// Gets the OAUth2 access and refresh tokens by exchanging a code from a code grant.
+    /// </summary>
+    /// <param name="clientID">The application client ID.</param>
+    /// <param name="clientSecret">The application client secret.</param>
+    /// <param name="refreshToken">The refresh token.</param>
+    /// <param name="grantType">The code grant type.</param>
+    /// <param name="ct">The cancellation token for this operation.</param>
+    /// <returns>A creation result which may or may not have succeeded.</returns>
+    Task<Result<IAccessTokenInformation>> RefreshTokenAsync
+    (
+        string clientID,
+        string clientSecret,
+        string refreshToken,
+        string grantType = "refresh_token",
+        CancellationToken ct = default
+    );
 }

@@ -105,4 +105,49 @@ public partial class CachingDiscordRestOAuth2API : IDiscordRestOAuth2API, IRestC
 
         return result;
     }
+
+    /// <inheritdoc/>
+    public Task<Result<IAccessTokenInformation>> ExchangeTokenAsync
+    (
+        string clientID,
+        string clientSecret,
+        string code,
+        string redirectUri,
+        string grantType = "authorization_code",
+        CancellationToken ct = default
+    )
+    {
+        return Task.FromResult
+        (
+            Result<IAccessTokenInformation>.FromError
+            (
+                new NotSupportedError
+                (
+                    $"{nameof(ExchangeTokenAsync)} is not supported by the caching layer due to the sensitive nature of OAuth2 tokens."
+                )
+            )
+        );
+    }
+
+    /// <inheritdoc/>
+    public Task<Result<IAccessTokenInformation>> RefreshTokenAsync
+    (
+        string clientID,
+        string clientSecret,
+        string refreshToken,
+        string grantType = "refresh_token",
+        CancellationToken ct = default
+    )
+    {
+        return Task.FromResult
+        (
+            Result<IAccessTokenInformation>.FromError
+            (
+                new NotSupportedError
+                (
+                    $"{nameof(RefreshTokenAsync)} is not supported by the caching layer due to the sensitive nature of OAuth2 tokens."
+                )
+            )
+        );
+    }
 }

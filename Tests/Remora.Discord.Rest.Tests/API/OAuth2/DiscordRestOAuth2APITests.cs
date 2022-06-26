@@ -87,4 +87,40 @@ public class DiscordRestOAuth2APITests
             ResultAssert.Successful(result);
         }
     }
+
+    /// <summary>
+    /// Tests the <see cref="DiscordRestOAuth2API.ExchangeTokenAsync"/> method.
+    /// </summary>
+    public class ExchangeTokenAsync : RestAPITestBase<IDiscordRestOAuth2API>
+    {
+        /// <summary>
+        /// Tests whether the API method performs its request correctly.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
+        [Fact]
+        public async Task PerformsRequestCorrectly()
+        {
+            var clientID = "999999999999999999";
+            var clientSecret = "zZm1eQDLfn8uJxWbCukBPUqhDA_Uxu1T";
+            var grantType = "authorization_code";
+            var code = "Fo4sD6uBo02YiFk8Sb11yXfecbkhCJ";
+            var redirectUri = "https://example.com/discord/callback";
+
+            var api = CreateAPI
+            (
+                b => b
+                    .Expect(HttpMethod.Post, $"{Constants.BaseURL}oauth2/token")
+                    .WithFormData("client_id", clientID)
+                    .WithFormData("client_secret", clientSecret)
+                    .WithFormData("grant_type", grantType)
+                    .WithFormData("code", code)
+                    .WithFormData("redirect_uri", redirectUri)
+                    .WithHeaders("Content-Type", "application/x-www-form-urlencoded")
+                    .Respond("application/json", SampleRepository.Samples[typeof(IAccessTokenInformation)])
+            );
+
+            var result = await api.ExchangeTokenAsync(clientID, clientSecret, grantType, code, redirectUri);
+            ResultAssert.Successful(result);
+        }
+    }
 }
